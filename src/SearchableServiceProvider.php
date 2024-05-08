@@ -2,24 +2,53 @@
 
 namespace Karabin\Searchable;
 
-use Karabin\Searchable\Commands\SearchableCommand;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
-class SearchableServiceProvider extends PackageServiceProvider
+class SearchableServiceProvider extends ServiceProvider
 {
-    public function configurePackage(Package $package): void
+    /**
+     * Like statmement
+     *
+     * @var string
+     */
+    protected $likeStatement = 'LIKE';
+
+    /**
+     * Register services.
+     */
+    public function register(): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('eloquent-searchable')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_eloquent-searchable_table')
-            ->hasCommand(SearchableCommand::class);
+        //
+    }
+
+    /**
+     * Bootstrap services.
+     */
+    public function boot(): void
+    {
+        Builder::macro('whereLike', function ($attributes, string $searchTerm) {
+            /** @var Builder $this * */
+            $this->where(function (Builder $query) use ($attributes, $searchTerm) {
+                foreach (Arr::wrap($attributes) as $attribute) {
+                    $query->when(
+                        Str::contains($attribute, '.'),
+                        function (Builder $query) use ($attribute, $searchTerm) {
+                            [$relationName, $relationAttribute] = explode('.', $attribute);
+                            $query->orWhereHas($relationName, function (Builder $query) use ($relationAttribute, $searchTerm) {
+                                $query->where($relationAttribute, 'LIKE', "%{$searchTerm}%");
+                            });
+                        },
+                        function (Builder $query) use ($attribute, $searchTerm) {
+                            $query->orWhere($attribute, 'LIKE', "%{$searchTerm}%");
+                        }
+                    );
+                }
+            });
+
+            return $this;
+        });
     }
 }
