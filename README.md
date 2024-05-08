@@ -10,37 +10,43 @@ You can install the package via composer:
 composer require karabinse/eloquent-searchable
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="eloquent-searchable-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="eloquent-searchable-config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="eloquent-searchable-views"
-```
 
 ## Usage
 
+Add the trait and add columns that are searchable.
+
 ```php
-$searchable = new Karabin\Searchable();
-echo $searchable->echoPhrase('Hello, Karabin!');
+use Karabin\Searchable\Concerns\IsSearchable;
+
+class User extends Authenticatable
+{
+    use HasFactory, HasRoles, IsSearchable, Notifiable;
+
+    protected $searchable = [
+        'name',
+        'email',
+    ];
+
+```
+
+The package also includes a custom TermSearchFitler to be used with [Laravel Query Builder](https://github.com/spatie/laravel-query-builder).
+```php
+use Karabin\Searchable\Filters\TermSearchFilter;
+
+class UserController extends Controller
+{
+    public function index(Request $request)
+    {
+        $users = QueryBuilder::for(User::class)
+            ->allowedFilters([
+                AllowedFilter::custom('search', new TermSearchFilter),
+            ])
+            ->paginate($request->query('limit', 10));
+
+        return Inertia::render('User/Index', [
+            'users' => UserData::collect($users),
+        ]);
+    }
 ```
 
 ## Testing
@@ -48,18 +54,6 @@ echo $searchable->echoPhrase('Hello, Karabin!');
 ```bash
 composer test
 ```
-
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 
