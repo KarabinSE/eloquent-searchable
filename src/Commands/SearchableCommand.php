@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Karabin\Searchable\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class SearchableCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'eloquent-searchable';
 
     public $description = 'My command';
 
