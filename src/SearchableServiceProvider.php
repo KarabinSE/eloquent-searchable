@@ -2,9 +2,9 @@
 
 namespace Karabin\Searchable;
 
+use Karabin\Searchable\Commands\SearchableCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Karabin\Searchable\Commands\SearchableCommand;
 
 class SearchableServiceProvider extends PackageServiceProvider
 {
