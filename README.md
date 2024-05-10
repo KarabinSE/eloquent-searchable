@@ -1,7 +1,7 @@
 # Easily search eloquent models and their relations
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/karabinse/eloquent-searchable.svg?style=flat-square)](https://packagist.org/packages/karabinse/eloquent-searchable)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/karabinse/eloquent-searchable.svg)](https://packagist.org/packages/karabinse/eloquent-searchable)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/karabinse/eloquent-searchable/run-tests.yml?branch=main&label=tests)](https://github.com/karabinse/eloquent-searchable/actions?query=workflow%3Arun-tests+branch%3Amain)
 
 ## Installation
 
