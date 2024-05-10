@@ -26,6 +26,7 @@ class User extends Authenticatable
     protected $searchable = [
         'name',
         'email',
+        'posts.title'
     ];
 
 ```
