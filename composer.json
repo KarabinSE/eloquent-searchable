@@ -10,8 +10,12 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Albin N",
+            "name": "Albin J Nilsson",
             "email": "albin@karabin.se",
+            "role": "Developer"
+        },
+        {
+            "name": "Daniel K Modig",
             "role": "Developer"
         }
     ],

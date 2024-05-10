@@ -59,7 +59,8 @@ composer test
 
 ## Credits
 
-- [Albin N](https://github.com/KarabinSE)
+- [Albin N](https://github.com/nivv)
+- [Daniel K Modig](https://github.com/dnkmdg)
 - [All Contributors](../../contributors)
 
 ## License
