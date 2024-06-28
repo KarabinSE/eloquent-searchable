@@ -23,7 +23,11 @@ class TermSearchFilter implements Filter
             $attributes = collect($model->getFillable())->diff($model->getHidden());
         }
 
-        $terms = explode(' ', $value);
+        if (! is_array($value)) {
+            $terms = explode(' ', $value);
+        } else {
+            $terms = $value;
+        }
 
         foreach ($terms as $term) {
             $query->whereLike($attributes, $term);
