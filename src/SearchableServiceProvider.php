@@ -42,7 +42,8 @@ class SearchableServiceProvider extends ServiceProvider
                             });
                         },
                         function (Builder $query) use ($attribute, $searchTerm) {
-                            $query->orWhere($attribute, 'LIKE', "%{$searchTerm}%");
+                            $table = $query->getModel()->getTable();
+                            $query->orWhere($table.'.'.$attribute, 'LIKE', "%{$searchTerm}%");
                         }
                     );
                 }
