@@ -42,8 +42,16 @@ class SearchableServiceProvider extends ServiceProvider
                             });
                         },
                         function (Builder $query) use ($attribute, $searchTerm) {
-                            $table = $query->getModel()->getTable();
-                            $query->orWhere($table.'.'.$attribute, 'LIKE', "%{$searchTerm}%");
+                            $model = $query->getModel();
+                            $table = $model->getTable();
+                            $connection = $model->getConnection();
+                            $type = $connection->getSchemaBuilder()->getColumnType($table, $attribute);
+                            if ($type === 'json') {
+                                // Cast to CHAR and use case-insensitive collation
+                                $query->orWhereRaw("LOWER(CAST(`{$table}`.`{$attribute}` AS CHAR)) COLLATE utf8mb4_unicode_ci LIKE ?", [strtolower("%{$searchTerm}%")]);
+                            } else {
+                                $query->orWhere($table.'.'.$attribute, 'LIKE', "%{$searchTerm}%");
+                            }
                         }
                     );
                 }
