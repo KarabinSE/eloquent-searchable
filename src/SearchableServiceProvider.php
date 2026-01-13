@@ -47,7 +47,12 @@ class SearchableServiceProvider extends ServiceProvider
                             $table = $model->getTable();
                             $connection = $model->getConnection();
 
-                            $type = $this->getColumnType($connection, $table, $attribute);
+                            try {
+                                $type = $connection->getSchemaBuilder()->getColumnType($table, $attribute);
+                            } catch (Exception $e) {
+                                // Handle unknown types like enum - treat as string
+                                $type = 'string';
+                            }
 
                             if ($type === 'json') {
                                 // Cast to CHAR and use case-insensitive collation
@@ -62,20 +67,5 @@ class SearchableServiceProvider extends ServiceProvider
 
             return $this;
         });
-    }
-
-    /**
-     * Get the column type, defaulting to string for unknown types.
-     *
-     * @param  mixed  $connection
-     */
-    protected function getColumnType($connection, string $table, string $attribute): string
-    {
-        try {
-            return $connection->getSchemaBuilder()->getColumnType($table, $attribute);
-        } catch (Exception $e) {
-            // Handle unknown types like enum - treat as string
-            return 'string';
-        }
     }
 }
