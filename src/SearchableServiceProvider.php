@@ -2,6 +2,7 @@
 
 namespace Karabin\Searchable;
 
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
@@ -45,7 +46,9 @@ class SearchableServiceProvider extends ServiceProvider
                             $model = $query->getModel();
                             $table = $model->getTable();
                             $connection = $model->getConnection();
-                            $type = $connection->getSchemaBuilder()->getColumnType($table, $attribute);
+
+                            $type = $this->getColumnType($connection, $table, $attribute);
+
                             if ($type === 'json') {
                                 // Cast to CHAR and use case-insensitive collation
                                 $query->orWhereRaw("LOWER(CAST(`{$table}`.`{$attribute}` AS CHAR)) COLLATE utf8mb4_unicode_ci LIKE ?", [strtolower("%{$searchTerm}%")]);
@@ -59,5 +62,20 @@ class SearchableServiceProvider extends ServiceProvider
 
             return $this;
         });
+    }
+
+    /**
+     * Get the column type, defaulting to string for unknown types.
+     *
+     * @param  mixed  $connection
+     */
+    protected function getColumnType($connection, string $table, string $attribute): string
+    {
+        try {
+            return $connection->getSchemaBuilder()->getColumnType($table, $attribute);
+        } catch (Exception $e) {
+            // Handle unknown types like enum - treat as string
+            return 'string';
+        }
     }
 }
